@@ -37,7 +37,7 @@ function stopAllAudio() {
   }
 }
 
-// Create and append the stop button
+// Stop Button
 const stopButtonContainer = document.createElement("div"); // Create a container for the stop button
 stopButtonContainer.id = "stopButtonContainer"; // Assign an id to the container
 document.body.appendChild(stopButtonContainer); // Append the container to the body
@@ -47,10 +47,10 @@ stopButton.textContent = "Stop Audio";
 stopButton.addEventListener("click", stopAllAudio);
 stopButtonContainer.appendChild(stopButton); // Append the button to the container
 
-// Note playing function
+// Function for note playing
 function playNote() {
   const frequency = this.dataset.note;
-  const volume = 5; // Default volume
+  const volume = 5;
 
   const waveType = document.getElementById("waveType").value;
   const tuning = frequency.split("_")[1]; // Extract tuning from the note frequency
@@ -73,7 +73,7 @@ function playNote() {
   currentOscillator.oscillator.start();
 }
 
-// Add event listener to the dropdown menu
+// Dropdown menu
 document.getElementById("waveType").addEventListener("change", playNote);
 
 // heading spacing and capitalization
@@ -86,7 +86,7 @@ function assignButtonsAndSliders(tuning) {
       .join(" ") + " Tuning"; // Capitalization and spacing for headings
   document.body.appendChild(tuningHeading);
 
-  // Master volume slider for the tuning section
+  // Master volume sliders
   const masterVolumeLabel = document.createElement("label");
   masterVolumeLabel.textContent = "Master Volume: ";
 
@@ -100,7 +100,7 @@ function assignButtonsAndSliders(tuning) {
   masterVolumeSlider.value = 5;
 
   masterVolumeSlider.addEventListener("input", function () {
-    masterGainNodes[tuning].gain.value = this.value / 10; // Update master gain value for the tuning
+    masterGainNodes[tuning].gain.value = this.value / 10; // Initial gain value
   });
 
   masterVolumeLabel.appendChild(masterVolumeSlider);
