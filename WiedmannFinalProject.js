@@ -4,14 +4,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const audioContext = new AudioContext();
 
   // Oscillator and volume
-  function createOscillatorWithVolume(frequency, volume) {
+  let currentOscillator = null;
+
+  function createOscillatorWithVolume(frequency, volume, waveType) {
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
 
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
 
-    oscillator.type = "sine";
+    oscillator.type = waveType;
     oscillator.frequency.value = frequency;
     gainNode.gain.value = volume;
 
@@ -24,37 +26,51 @@ document.addEventListener("DOMContentLoaded", function () {
     const volumeSlider = document.getElementById(`${frequency}_volume`);
     const volume = volumeSlider.value;
 
-    const { oscillator, gainNode } = createOscillatorWithVolume(
+    const waveType = document.getElementById("waveType").value;
+
+    if (currentOscillator) {
+      currentOscillator.oscillator.stop();
+    }
+
+    currentOscillator = createOscillatorWithVolume(
       frequencies[frequency],
-      volume / 10 // makes volume between 0 and 1
+      volume / 10, // makes volume between 0 and 1
+      waveType
     );
 
-    oscillator.start();
+    currentOscillator.oscillator.start();
     setTimeout(() => {
-      oscillator.stop();
+      currentOscillator.oscillator.stop();
     }, 1000);
   }
 
-  // Buttons and sliders for specific tunings
+  // Add event listener to the dropdown menu
+  document.getElementById("waveType").addEventListener("change", playNote);
+
+  // Add event listener to the dropdown menu
+  document.getElementById("waveType").addEventListener("change", playNote);
+
+  // heading spacing and capitalization
   function assignButtonsAndSliders(tuning) {
     const tuningHeading = document.createElement("h2");
     tuningHeading.textContent =
       tuning
-        .split(/(?=[A-Z])/)
+        .split(/(?=[A-Z])/) //separates tuning headings based on capital letters
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ") + " Tuning"; // Capitalization and spacing corrections for headings
+        .join(" ") + " Tuning"; // Capitalization and spacing for headings
     document.body.appendChild(tuningHeading);
 
+    //Buttons and sliders for specific tunings
     Object.keys(frequencies)
-      .filter((note) => note.includes(`_${tuning}`))
+      .filter((note) => note.includes(`_${tuning}`)) //makes sure buttons are assigned to proper names
       .forEach((note) => {
-        const container = document.createElement("div");
+        const container = document.createElement("div"); //creates containers
         container.classList.add("note-container");
 
         const button = document.createElement("button");
         button.classList.add("play-btn");
         button.dataset.note = `${note}`;
-        button.textContent = `Play ${note.split("_")[0]}`;
+        button.textContent = `Play ${note.split("_")[0]}`; //array to align a selected note to it's button
         button.addEventListener("click", playNote);
         container.appendChild(button);
 
@@ -85,18 +101,21 @@ document.addEventListener("DOMContentLoaded", function () {
     G3_standard: 196.0,
     B3_standard: 246.94,
     E4_standard: 329.63,
+    // drop D
     D2_dropD: 73.42,
     A2_dropD: 110.0,
     D3_dropD: 146.83,
     G3_dropD: 196.0,
     B3_dropD: 246.94,
     E4_dropD: 329.63,
+    // open G
     D2_openG: 73.42,
     G2_openG: 98.0,
     D3_openG: 146.83,
     G3_openG: 196.0,
     B3_openG: 246.94,
     D4_openG: 293.66,
+    // half step down
     Eb2_halfStepDown: 77.78,
     Ab2_halfStepDown: 103.83,
     Db3_halfStepDown: 138.59,
